@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cpu - WebGpu Benchmark</title>
+    <style>
+      body {
+        background-color: #111;
+        color: #eee;
+      }
+    </style>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgpu@4.11.0/dist/tf-backend-webgpu.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Tensorflow.js: Cpu vs WebGpu Benchmark</h1>
+
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <div class="card p-3">
+            <div class="mb-2">
+              <button id="btn-run-cpu" class="btn btn-primary ms-2">
+                Run Cpu Test
+              </button>
+              <button id="btn-run-webgpu" class="btn btn-success ms-2">
+                Run Gpu Test
+              </button>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label">Matrix Size (N x N)</label>
+              <input
+                id="input-size"
+                class="form-control"
+                type="number"
+                min="64"
+                max="4096"
+                value="1024"
+              />
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label">Iteration Number</label>
+              <input
+                id="input-iters"
+                class="form-control"
+                type="number"
+                min="1"
+                max="20"
+                value="5"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card p-3">
+          <h3>Results</h3>
+          <div id="status" class="mb-2">Status : Waiting</div>
+          <pre
+            id="log"
+            style="
+              height: 320px;
+              background-color: rgb(43, 42, 38);
+              overflow: auto;
+              color: white;
+            "
+          ></pre>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    function log(msg) {
+      var now = new Date().toLocaleString();
+      $("#log").prepend(`[${now}]${msg}\n`);
+    }
+    //
+    async function checkWebGpuSupport() {
+      var supported = tf.backend === "webgpu" || navigator.gpu !== undefined;
+      if (!supported) {
+        log("Web gpu desteklenmiyor veya etkin değil.");
+        $("#status").text("Status : WebGpu desteklenmiyor veya etkin değil.");
+        return false;
+      }
+      log("WebGpu destekleniyor ve etkin.");
+      $("#status").text("Status : WebGpu destekleniyor ve etkin.");
+      return true;
+    }
+    //
+    async function setBackend(backendName) {
+      log(`Backend ${backendName} olarak ayarlanıyor...`);
+      try {
+        await tf.setBackend(backendName);
+        await tf.ready();
+        log(`Backend ${backendName} olarak ayarlandı.`);
+        $("#status").text(`Status : Backend ${backendName} aktif.`);
+        return true;
+      } catch (error) {
+        log(
+          `Backend ${backendName} ayarlanırken hata oluştu: ${error.message}`
+        );
+        $("#status").text(
+          `Status : Backend ${backendName} ayarlanırken hata oluştu.`
+        );
+        return false;
+      }
+    }
+    async function runTest(backend, size, iters) {
+      log(
+        `Test başlatılıyor: Backend=${backend}, Size=${size}, iterations=${iters}`
+      );
+      var ok = await setBackend(backend);
+      if (!ok) {
+        log("Backend ayarlanamadı, test iptal edildi.");
+        return;
+      }
+      // bir kerelik ısınma
+      // log("Warm-up çalıştırılıyor...");
+      // await tf.tidy(() => {
+      //   var a = tf.randomNormal([size, size]);
+      //   var b = tf.randomNormal([size, size]);
+      //   var c = tf.matMul(a, b);
+      //   return c;
+      // });
+      // await tf.nextFrame(); // GPU işlemlerinin tamamlanmasını bekle
+      // log("Warm-up tamamlandı.");
+      log(`-------${backend} sonuçları-------`);
+      // gerçek ölçümler
+      var times = [];
+      for (var i = 0; i < iters; i++) {
+        var t0 = performance.now(); // Başlangıç zamanı
+        await tf.tidy(async () => {
+          var a = tf.randomNormal([size, size]);
+          var b = tf.randomNormal([size, size]);
+          var c = tf.matMul(a, b);
+          await c.data(); // Sonuçları almak için bekle
+        });
+        var t1 = performance.now(); // Bitiş zamanı
+        var elapsed = t1 - t0;
+        times.push(elapsed);
+
+        log(`Iteration ${i + 1}/${iters}: ${elapsed.toFixed(2)} ms`);
+
+        await new Promise((r) => setTimeout(r, 50)); //50ms bekle
+      }
+      var avg = times.reduce((a, b) => a + b, 0) / times.length;
+      var min = Math.min(...times);
+      var max = Math.max(...times);
+      log(`En düşük süre: ${min.toFixed(2)} ms`);
+      log(`En yüksek süre: ${max.toFixed(2)} ms`);
+      log(`Ortalama süre: ${avg.toFixed(2)} ms`);
+      $("#result").text(`Ortalama süre: ${avg.toFixed(2)} ms`);
+      $("#status").text(`Status : Test tamamlandı.`);
+      return avg;
+    }
+    $(document).ready(function () {
+      log("Page loaded");
+      $("#btn-run-cpu").click(async function () {
+        var size = parseInt($("#input-size").val());
+        var iters = parseInt($("#input-iters").val());
+        log("CPU testi başlatılıyor...");
+        await runTest("cpu", size, iters);
+      });
+      $("#btn-run-webgpu").click(async function () {
+        var size = parseInt($("#input-size").val());
+        var iters = parseInt($("#input-iters").val());
+        log("GPU testi başlatılıyor...");
+        await runTest("webgpu", size, iters);
+      });
+      // Sayfa yüklendiğinde WebGpu desteğini kontrol et
+      checkWebGpuSupport();
+    });
+  </script>
+</html>

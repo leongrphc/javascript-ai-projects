@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Array Functions</title>
+    <script src="jquery.js"></script>
+  </head>
+  <body>
+    <input type="text" id="text" placeholder="sayi giriniz" />
+    <button id="btn">Click Me</button>
+    <p id="array">Elemanlar:</p>
+    <button id="topla">TOPLA</button>
+  </body>
+  <script>
+    $(document).ready(function () {
+      var array = []; // yeni bir dizi oluştur
+      $("#btn").on("click", function () {
+        var eklenecekSayi = $("#text").val(); // inputtan değeri al
+        array.push(eklenecekSayi); // dizinin sonuna ekle
+        console.log("Güncellenmiş Dizi: " + array); // güncellenmiş diziyi göster
+        $("#array").text("Elemanlar: " + array.join(",")); // diziyi ekranda göster
+      });
+    });
+    $(document).on("click", "#topla", function () {
+      var sum = 0;
+      $("#array")
+        .text()
+        .replace("Elemanlar: ", "")
+        .split(",")
+        .forEach(function (test) {
+          sum += parseFloat(test) || 0; // sayıya çevir ve topla
+        });
+      alert("Toplam: " + sum); // toplamı göster
+    });
+    // var arr = ["Apple", "Banana", "Mango", "Orange"];
+    // var arr_length = arr.length; // dizinin uzunluğu
+    // console.log("Array Length: " + arr_length);
+    // var arr_to_string = arr.toString(); // diziyi stringe çevirir
+    // console.log("Array to String: " + arr_to_string);
+    // var a1 = [11, 22, 33];
+    // var a2 = [44, 55, 66];
+    // var a3 = [99, 88, 77];
+    // var new_arr = a1.concat(a2, a3); // iki diziyi birleştirir
+    // console.log("New Array: " + new_arr);
+    // var array1 = [
+    //   ["John", 28],
+    //   ["Jane", 26],
+    //   ["Jim", 30],
+    // ];
+    // var flat_array = array1.flat(Infinity);
+    // var array2 = array1.flat(Infinity);
+    // console.log("Array2: " + array2);
+
+    // var pusharray = ["Red", "Green", "Blue"];
+    // pusharray.push("Yellow");
+    // console.log("After Push: " + pusharray); // sona ekler
+    // pusharray.unshift("Purple");
+    // console.log("After Unshift: " + pusharray); // başa ekler
+    // pusharray.pop();
+    // console.log("After Pop: " + pusharray); // son elemanı çıkarır
+    // pusharray.shift();
+    // console.log("After Shift: " + pusharray); // ilk elemanı çıkarır
+
+    // var slicearray = ["A", "B", "C", "D", "E", "F"];
+    // console.log("Slice Array: " + slicearray);
+    // var sliced = slicearray.slice(2, 5); // belirli bir kısmı alır
+    // console.log("Sliced Array: " + sliced);
+    // var d1 = [10, 20, 30, 40, 50];
+    // console.log("D1 Array: " + d1);
+    // var d2 = d1.some((value) => value > 20);
+    // console.log("Some fonkisyonunda gelen değer: " + d2);
+    // var d2 = d1.filter((value) => value > 20);
+    // console.log("Filter Sonucu: " + d2);
+  </script>
+</html>

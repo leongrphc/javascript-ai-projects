@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Image Processing</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
+    <style>
+      body {
+        text-align: center;
+        margin-top: 40px;
+      }
+      img {
+        max-width: 300px;
+        margin-top: 20px;
+        border-radius: 8px;
+      }
+      #result {
+        font-size: 1.3em;
+        font-weight: bold;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>TensorFlow ile Görüntü İşleme</h1>
+    <button id="loadPredictions">Eski tahminleri getir</button>
+    <button id="kayitlariSil">Kayıtları Sil</button>
+    <input type="file" id="upload" accept="image/*" /><br />
+    <img id="preview" alt="Seçilen görsel" style="display: none" />
+    <div id="result"></div>
+  </body>
+
+  <script>
+    var model;
+    $(document).ready(async function () {
+      $("#result").text("Model yükleniyor...");
+      model = await mobilenet.load();
+      $("#result").text("Model yüklendi.");
+      loadPredictions();
+      $(document).on("change", "#upload", async function (e) {
+        var file = e.target.files[0];
+        if (!file) {
+          return false;
+        }
+        var img = $("#preview");
+        img.attr("src", URL.createObjectURL(file));
+        img.show();
+        img.on("load", async function () {
+          console.log("Görsel yüklendi, tahmin yapılıyor...");
+          var predictions = await model.classify(img[0]);
+          console.log("Tahminler:", predictions);
+          $("#result").text(
+            `Tahmin: ${predictions[0].className} (Güven: ${(
+              predictions[0].probability * 100
+            ).toFixed(2)}%)`
+          );
+          savePrediction(predictions[0]);
+        });
+      });
+    });
+    $("#loadPredictions").click(function () {
+      loadPredictions();
+    });
+    $("#kayitlariSil").click(function () {
+      localStorage.clear();
+      location.reload();
+    });
+    /*  Görev:
+        Mobilenet modelini ekleyip belirli bir nesneyi yüksek doğruluk oranı ile tanıtmaya çalışın. Modelden tahminler döndükçe localstorage kayıt edin. 
+        Sayfa açılırken önceki tahminlerin sonuçlarını ve oranları gösterin.
+    */
+    function savePrediction(prediction) {
+      var predictions = JSON.parse(localStorage.getItem("predictions")) || [];
+      predictions.push(prediction);
+      localStorage.setItem("predictions", JSON.stringify(predictions));
+    }
+
+    function loadPredictions() {
+      var predictions = JSON.parse(localStorage.getItem("predictions")) || [];
+      var resultDiv = $("#result");
+      resultDiv.append("<h3>Önceki Tahminler:</h3>");
+      predictions.forEach((tahmin, sira) => {
+        resultDiv.append(
+          `<p>${sira + 1}. Tahmin: ${tahmin.className} (Güven: ${(
+            tahmin.probability * 100
+          ).toFixed(2)}%)</p>`
+        );
+      });
+    }
+  </script>
+</html>

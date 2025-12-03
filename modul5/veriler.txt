@@ -1,0 +1,13 @@
+[22.11.2025 11:13:48] Girdi: 21, Kare: 441, Durum: Tek
+[22.11.2025 11:13:52] Girdi: 33, Kare: 1089, Durum: Tek
+[22.11.2025 11:13:55] Girdi: 40, Kare: 1600, Durum: Çift
+[22.11.2025 11:16:43] Girdi: 1, Kare: 1, Durum: Tek
+[22.11.2025 11:16:46] Girdi: 2, Kare: 4, Durum: Çift
+[22.11.2025 11:16:46] Girdi: 3, Kare: 9, Durum: Tek
+[22.11.2025 11:16:47] Girdi: 4, Kare: 16, Durum: Çift
+[22.11.2025 11:16:47] Girdi: 5, Kare: 25, Durum: Tek
+[22.11.2025 11:16:50] Girdi: 5684, Kare: 32307856, Durum: Çift
+[22.11.2025 11:17:46] Girdi: 9898, Kare: 97970404, Durum: Çift
+[22.11.2025 11:17:49] Girdi: 0, Kare: 0, Durum: Çift
+[22.11.2025 11:17:52] Girdi: 11, Kare: 121, Durum: Tek
+[28.11.2025 21:00:08] Girdi: 331, Kare: 109561, Durum: Tek

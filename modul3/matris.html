@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <title>Modül 3 Yapay Zeka</title>
+  </head>
+
+  <body>
+    <h1>Matrisler</h1>
+  </body>
+  <script>
+    var matrix = [
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+    ];
+    console.log("Matris:", matrix);
+    console.log("İkinci Satır, Üçüncü Sütun:", matrix[1][2]);
+    matrix.forEach((satir) => {
+      satir.forEach((eleman) => {
+        // console.log(satir + " satırındaki " + eleman);
+      });
+    });
+    // transpose işlemi - satır ve sütunların yer değiştirmesi
+    var matrix2 = [
+      [10, 11, 12],
+      [13, 14, 15],
+    ];
+    var transpose = matrix2[0].map((col, i) => matrix2.map((row) => row[i]));
+    console.log(transpose);
+    var new_transpose = [
+      [10, 13],
+      [11, 14],
+      [12, 15],
+    ];
+    revertTranspose = new_transpose[0].map((col, i) =>
+      new_transpose.map((row) => row[i])
+    );
+    console.log(revertTranspose);
+  </script>
+</html>

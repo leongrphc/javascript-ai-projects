@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .arama {
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+  </style>
+  <body>
+    <script>
+      console.log("Hello, World!");
+      function gönder() {
+        var arama = document.getElementById("id1").value;
+        var şifre = document.getElementById("id2").value;
+        var yaş = document.getElementById("id3").value;
+        console.log("Arama: " + arama);
+        console.log("Şifre: " + şifre);
+        console.log("Yaş: " + yaş);
+        alert("Bilgiler gönderildi!");
+        document.getElementById("sonuc").innerText =
+          "sonuç: " + arama + ", " + şifre + ", " + yaş;
+      }
+    </script>
+
+    <!-- <h1 id="baslik">Hello, World!</h1>
+    <p>This is a simple HTML document.</p>
+    <img
+      src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Unofficial_JavaScript_logo_2.svg/250px-Unofficial_JavaScript_logo_2.svg.png"
+      alt="js logo"
+    />
+    <br />
+
+    <a id="test"
+      href="https://v2.mozkantasarim.com"
+      style="
+        color: darkgreen;
+        text-decoration: none;
+        font-size: 20px;
+        font-weight: bold;
+        
+      "
+      >kişisel site</a> -->
+    <br />
+    <input type="text" class="arama" id="id1" placeholder="Arama yapın..." />
+    <br />
+    <input
+      type="password"
+      class="arama"
+      id="id2"
+      placeholder="Şifre girin..."
+    />
+    <br />
+    <input
+      type="number"
+      class="arama"
+      id="id3"
+      placeholder="Yaşınızı girin..."
+    />
+    <br />
+    <button onclick="gönder()">Gönder</button>
+    <h3 id="sonuc">sonuç:</h3>
+    <!-- <table border="1">
+      <tr>
+        <th>Şehir</th>
+        <th>İlçe</th>
+        <th>Mahalle</th>
+      </tr>
+      <tr>
+        <td>İstanbul</td>
+        <td>Beşiktaş</td>
+        <td>Levent</td>
+      </tr>
+      <tr>
+        <td>Ankara</td>
+        <td>Çankaya</td>
+        <td>Gaziosmanpaşa</td>
+      </tr>
+      </tr>
+      <tr>
+        <td>Bursa</td>
+        <td>Osmangazi</td>
+        <td>Osmanlı</td>
+      </tr>
+    </table> -->
+  </body>
+</html>

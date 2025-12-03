@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form işlemleri Mustafa Özkan</title>
+    <style>
+      .btn.btn-danger.inceayar {
+        margin-left: 10px;
+        margin-bottom: 5px;
+        font-size: 12px;
+        font-weight: bold;
+      }
+      .btn.btn-danger.inceayar:hover {
+        background-color: orange;
+        border-color: black;
+        color: black;
+      }
+      input.form-control,
+      textarea.form-control {
+        border: 1px solid white;
+        color: gray;
+        opacity: 0.9;
+      }
+      input.form-control:focus,
+      textarea.form-control:focus {
+        border-color: red;
+        outline: none;
+      }
+    </style>
+  </head>
+  <link href="bootstrap.min.css" rel="stylesheet" />
+  <body style="background-color: #151718; color: white">
+    <div class="container p-5 my-5 border rounded">
+      <center><h1>Form İşlemleri</h1></center>
+      <form id="form-control">
+        <div class="mb-3 mt-3">
+          <label for="ad" class="form-label">Ad</label>
+          <button type="button" class="btn btn-danger inceayar" id="ad-sil">
+            Sil ve Düzenle
+          </button>
+
+          <input type="text" class="form-control" id="ad" required />
+        </div>
+        <div class="mb-3 mt-3">
+          <label for="soyad" class="form-label">Soyad</label>
+          <button type="button" class="btn btn-danger inceayar" id="soyad-sil">
+            Sil ve Düzenle
+          </button>
+
+          <input type="text" class="form-control" id="soyad" required />
+        </div>
+        <div class="row">
+          <div class="col">
+            <label for="yas" class="form-label">Yaşınız</label>
+            <button type="button" class="btn btn-danger inceayar" id="yas-sil">
+              Sil ve Düzenle
+            </button>
+
+            <input
+              type="number"
+              class="form-control"
+              placeholder="Yaşınızı girin"
+              id="yas"
+            />
+          </div>
+          <div class="col">
+            <label for="telefon" class="form-label">Telefon Numarası</label>
+            <button
+              type="button"
+              class="btn btn-danger inceayar"
+              id="telefon-sil"
+            >
+              Sil ve Düzenle
+            </button>
+
+            <input
+              type="text"
+              class="form-control"
+              placeholder=" 0 olmadan giriniz"
+              inputmode="numeric"
+              required
+              id="telefon"
+            />
+          </div>
+        </div>
+        <div class="mb-3 mt-3">
+          <label for="email" class="form-label">Email</label>
+          <button type="button" class="btn btn-danger inceayar" id="email-sil">
+            Sil ve Düzenle
+          </button>
+
+          <input type="email" class="form-control" id="email" required />
+        </div>
+        <div class="mb-3 mt-3">
+          <label for="adres" class="form-label">Adres</label>
+          <button type="button" class="btn btn-danger inceayar" id="adres-sil">
+            Sil ve Düzenle
+          </button>
+
+          <textarea class="form-control" id="adres" required></textarea>
+        </div>
+        <div class="mb-3 mt-3">
+          <label for="tc" class="form-label">TC Kimlik No</label>
+          <button type="button" class="btn btn-danger inceayar" id="tc-sil">
+            Sil ve Düzenle
+          </button>
+          <input
+            class="form-control"
+            type="text"
+            id="tc"
+            maxlength="11"
+            pattern="\d{11}"
+            title="Lütfen 11 haneli TC Kimlik Numaranızı girin."
+            inputmode="numeric"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-success" id="kaydet">
+          Kaydet
+        </button>
+        <button class="btn btn-danger" id="hepsiniSil">Hepsini Temizle</button>
+      </form>
+    </div>
+  </body>
+  <script src="bootstrap.bundle.min.js"></script>
+  <script src="jquery.js"></script>
+  <script>
+    function verileriDoldur() {
+      $("#ad").val(localStorage.getItem("ad"));
+      $("#soyad").val(localStorage.getItem("soyad"));
+      $("#yas").val(localStorage.getItem("yas"));
+      $("#telefon").val(localStorage.getItem("telefon"));
+      $("#email").val(localStorage.getItem("email"));
+      $("#adres").val(localStorage.getItem("adres"));
+      $("#tc").val(localStorage.getItem("tc"));
+    }
+    $(document).ready(function () {
+      verileriDoldur();
+    });
+    function veriAl() {
+      var ad = $("#ad").val().trim();
+      var soyad = $("#soyad").val().trim();
+      var yas = $("#yas").val().trim();
+      var telefon = $("#telefon").val().trim();
+      var email = $("#email").val().trim();
+      var adres = $("#adres").val().trim();
+      var tc = $("#tc").val().trim();
+
+      localStorage.setItem("ad", ad);
+      localStorage.setItem("soyad", soyad);
+      localStorage.setItem("yas", yas);
+      localStorage.setItem("telefon", telefon);
+      localStorage.setItem("email", email);
+      localStorage.setItem("adres", adres);
+      localStorage.setItem("tc", tc);
+    }
+    $(document).on("click", "#ad-sil", function () {
+      $("#ad").val("");
+      localStorage.removeItem("ad");
+      $("#ad").focus();
+    });
+    $(document).on("click", "#soyad-sil", function () {
+      $("#soyad").val("");
+      localStorage.removeItem("soyad");
+      $("#soyad").focus();
+    });
+    $(document).on("click", "#yas-sil", function () {
+      $("#yas").val("");
+      localStorage.removeItem("yas");
+      $("#yas").focus();
+    });
+    $(document).on("click", "#telefon-sil", function () {
+      $("#telefon").val("");
+      localStorage.removeItem("telefon");
+      $("#telefon").focus();
+    });
+    $(document).on("click", "#email-sil", function () {
+      $("#email").val("");
+      localStorage.removeItem("email");
+      $("#email").focus();
+    });
+    $(document).on("click", "#adres-sil", function () {
+      $("#adres").val("");
+      localStorage.removeItem("adres");
+      $("#adres").focus();
+    });
+    $(document).on("click", "#tc-sil", function () {
+      $("#tc").val("");
+      localStorage.removeItem("tc");
+      $("#tc").focus();
+    });
+    $(document).on("click", "#kaydet", function () {
+      if ($("#form-control")[0].checkValidity()) {
+        veriAl();
+        alert("Form başarıyla kaydedildi.");
+      } else if (numaraString.startsWith("0")) {
+        alert("Lütfen telefon numarasını 0 olmadan giriniz.");
+      } else {
+        alert("Lütfen tüm alanları doğru şekilde doldurun.");
+      }
+    });
+    $(document).on("click", "#hepsiniSil", function () {
+      localStorage.clear();
+    });
+  </script>
+</html>

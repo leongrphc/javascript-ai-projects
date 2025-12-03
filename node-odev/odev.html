@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transfer Learning</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
+    <style>
+      .btn-custom {
+        background-color: orangered;
+        color: white;
+      }
+      .btn-custom:hover {
+        background-color: darkorange;
+        color: white;
+        transition: 0.6s ease-in;
+      }
+      .card {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+      }
+      .container {
+        max-width: 600px;
+        margin-top: 50px;
+      }
+      textarea {
+        resize: none;
+      }
+      textarea:focus {
+        outline: none;
+      }
+      .form-label {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card p-4 mx-auto" style="max-width: 800px; margin-top: 40px">
+        <h3 class="text-center mb-3">TensorFlow ile Duygu Analizi</h3>
+        <p class="text-muted text-center">Duygu Analizi Cümlesi</p>
+        <div class="mb-3">
+          <label for="inputText" class="form-label">Cümle Girin:</label>
+          <textarea
+            class="form-control"
+            id="inputText"
+            rows="3"
+            placeholder="Örnek Cümleler"
+          ></textarea>
+        </div>
+        <div class="d-grid">
+          <button id="predictBtn" class="btn btn-custom">Analiz Et</button>
+        </div>
+        <div
+          id="loading"
+          class="mt-4 text-center text-secondary"
+          style="display: block"
+        >
+          Yükleniyor...
+        </div>
+        <div id="result" class="mt-4 text-center fw-bold"></div>
+      </div>
+      <div>
+        <h6 style="text-align: center; margin-top: 10px">Eğitim Logları</h6>
+        <div
+          id="log"
+          class="border rounded p-2 bg-light mt-3"
+          style="height: 200px; overflow-y: auto"
+        ></div>
+      </div>
+    </div>
+  </body>
+  <script>
+    var model;
+    var encoder;
+    function logMessage(message) {
+      $("#log").append(message + "<br/>");
+    }
+    $(document).ready(function () {
+      //   console.log("test...");
+      loadModel();
+    });
+    async function loadModel() {
+      logMessage("Model yükleniyor...");
+      encoder = await use.load();
+      logMessage("Universal Sentence Encoder yüklendi.");
+      model = tf.sequential(); // katmanlı model oluşturma
+      model.add(
+        tf.layers.dense({ units: 16, activation: "relu", inputShape: [512] })
+      ); // 512 boyutlu 16 nöronlu gizli katman
+      model.add(tf.layers.dropout({ rate: 0.2 })); // overfitting önleme
+      model.add(tf.layers.dense({ units: 2, activation: "softmax" })); // 2 li sınıflandırma çıktı katmanı pozitif ve negatif
+      model.compile({
+        optimizer: tf.train.adam(0.001), // adam optimizasyon algoritması
+        loss: "categoricalCrossentropy", // kayıp
+        metrics: ["accuracy"], // başarı metriği
+      });
+      logMessage("Model oluşturuldu ve derlendi.");
+      $("#loading").hide();
+      //Eğitim verisi ile modeli eğit
+      var sampleSentences = [
+        "Bu ürün harika, çok beğendim!",
+        "Hizmet berbat, bir daha asla kullanmam.",
+        "Kalitesi mükemmel, kesinlikle tavsiye ederim.",
+        "Çok kötü bir deneyimdi, hayal kırıklığına uğradım.",
+        "Fiyatına göre oldukça iyi bir performans sunuyor.",
+        "Ürün beklediğimden çok daha kötü çıktı.",
+        "i hate this movie, it was a waste of time.",
+        "this is the best book i have ever read.",
+        "i love you",
+        "this restaurant has terrible service.",
+        "the weather is lovely today.",
+        "i am so frustrated with my job.",
+        "i was happy with the results.",
+        "i was sad to hear the news.",
+        "i was excited about the trip.",
+        "i am angry about the delay.",
+      ];
+      // Etiketler: 1=pozitif, 0=negatif
+      var sampleLabels = tf.tensor2d([
+        [1, 0],
+        [0, 1],
+        [1, 0],
+        [0, 1],
+        [1, 0],
+        [0, 1],
+        [0, 1],
+        [1, 0],
+        [1, 0],
+        [0, 1],
+        [1, 0],
+        [0, 1],
+        [1, 0],
+        [0, 1],
+        [1, 0],
+        [0, 1],
+      ]);
+
+      var embeddings = await encoder.embed(sampleSentences); // cümleleri vektöre çevirme
+      await model.fit(embeddings, sampleLabels, {
+        epochs: 20, // 20 tur
+        batchSize: 2, // her seferde 2 örnek
+        shuffle: true, // veriyi karıştır
+        callbacks: {
+          onEpochEnd: (epoch, logs) => {
+            logMessage(
+              `
+                Epoch ${epoch + 1}: Kayıp = ${logs.loss.toFixed(
+                4
+              )}, Doğruluk = ${(logs.acc * 100).toFixed(2)}%
+                `
+            );
+          },
+        },
+      }); // modeli eğitme
+      $("#loading").show().text("Model yüklendi ve eğitildi.");
+      logMessage("Model eğitildi.");
+    }
+    async function predictText() {
+      var text = $("#inputText").val().trim();
+      $("#result").text("Tahmin ediliyor...");
+      var embedding = await encoder.embed([text]); // girdi cümlesini vektöre çevir
+      var prediction = model.predict(embedding); // tahmin yap
+      var result = prediction.arraySync()[0]; // sonucu al dizi şeklinde
+      if (result[0] > result[1]) {
+        $("#result").text(`
+        Tahmin: Pozitif 
+        Güven: ${(result[0] * 100).toFixed(2)}%
+        `);
+      } else {
+        $("#result").text(`
+        Tahmin: Negatif
+        Güven: ${(result[1] * 100).toFixed(2)}%
+        `);
+      }
+    }
+    $("#predictBtn").click(function () {
+      predictText();
+    });
+
+    $("#inputText").keypress(function (e) {
+      if (e.which == 13) {
+        predictText();
+        return false; // Enter tuşunun yeni satır eklemesini engelle
+      }
+    });
+
+    /*
+            Pre-Trained Model = Önceden eğitilmiş model
+            Training from stratch = Sıfırdan eğitim
+
+            Avantajları
+            Zaman tasarrufu = Eğitim süresi kısalır çünkü model zaten birçok örnekten öğrenmiştir.
+            Daha az veri gereksinimi = Küçük veri setlerinde bile iyi performans gösterebilir.
+            Maliyet tasarrufu = Hesaplama kaynakları ve enerji maliyetleri azalır.
+            Daha iyi doğruluk = Özellikle sınırlı veri setlerinde daha iyi sonuçlar verebilir.
+            Transfer  learning olanağı = Farklı ama ilişkili görevler için kullanılabilir.
+
+            Fine-tuning = İnce ayar
+            önceden eğitilmiş bir modelin tüm ağırlıklarını kullanarak, belirli bir görev için modelin son katmanlarını yeniden eğitme sürecidir.
+            model yeni göreve özel ince ayar yapar.
+            bu yöntem özellikle yeni görev, önceden eğitilmiş modelin eğitildiği görevle benzer olduğunda etkilidir.
+
+            Kullanım Alanları
+            Görüntü işleme = Mobilenet, VGG, REsnet , EfficientNet
+            Doğal dil işleme = BERT, GPT, Word2Vec
+            Ses işleme = Wav2Vec, DeepSpeech, Whisper
+
+            Dikkat Edilmesi Gerekenler
+            Benzer Görevler = EĞer yeni görev öncekinden çok farklıysa, transfer learning etkili olmayabilir.
+            Katman Seçimi = Hangi katmanların dondurulacağı veya yeniden eğitileceği dikkatlice seçilmelidir.
+            Aşırı Uyum (Overfitting) = Küçük veri setlerinde fine-tuning yaparken dikkatli olunmalıdır.
+            Uygun öğrenme oranı (learning rate) = Fine tuning sırasında uygun öğrenme oranı seçilmelidir.
+        */
+  </script>
+</html>

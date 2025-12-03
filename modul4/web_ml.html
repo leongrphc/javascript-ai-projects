@@ -1,0 +1,106 @@
+<html>
+    <head>
+        <title>Web Tabanlı ML Uygulamaları </title>
+        
+    </head>
+    <body>
+
+    
+    </body>
+    <script>
+
+    
+            /*
+            Web Tabanlı Makine Öğrenmesi(ML => Makine Öğrenmesi)
+
+            Web tabanlı makine öğrenimi, sunucuya(server) bağımlı kalmadan, ML modellerinin doğrudan kullanıcının
+            cihazında(istemci/tarayıcı) çalışabilmesidir. Bu durum, web tabanlı uygulamaların yapay zeka yeteneklerini
+            arttırır.
+
+            Avantajlar
+            - Hız (Gerçek Zamanlı İşlem) = Veriler sunucuya gönderilmek zorunda kalmadığı için tahminler daha hızlı, 
+            neredeyse gerçek zamanlı yapılabilir.
+            - Gizlilik = Hassas veriler kullanıcının cihazında kalır, sunucuya aktarılmaz. Bu, özellikle kişisel
+            veriler için gizliliği arttırı.
+            - Maliyet = Sunucu tarafında yoğun işlem gücü (CPU/GPU) gereksinimi azalır veya artar, bu da altyapı
+              maliyetini değiştirir.
+            - Erişilebilirlik = İnternet erişimi olan hemen her cihazdaki modern tarayıcı ile çalışabilir.
+
+            Performans ve Hızlandırma (WebGL/WebGpu)
+            - Makine öğrenimi mdeolleri yoğun matematiksel işlemler gerektirir. Tarayıcıdaki standart
+            Javascript(Cpu) bu yükü taşımakta yetersiz kalır.
+            - WebGL => Tensorflow.js gibi kütüphaneler, hesaplamaları CPU yerine kullanıcının Grafik İşlem Birimine(GPU)
+            devretmek için WebGL API'sinden faydalanır.
+            - WebGpu => WebGL, 3D grafikler için tasarlanmış eski bir API'dir. WebGpu, ML iş yükleri için daha verimli
+            paralel hesaplama yeteneği ve modern GPU özelliklerine erişim sağlar.
+
+            Model Dönüşümü ve Optimizasyonu
+            - Model Dönüştürme (Conversion)
+                Bir python modelinin tarayıcıda çalışabilmesi için, öncelikle tensorflow.js'in anlayabileceği JSON
+                formatına dönüştürülmesi gerekir. Tensorflow.js dönüştürücü aracı bu işlemi yapar.
+            - Ağırlık Kuantizasyonu (Weight Quantization)
+                Modelin dosya boyutunu küçültmek ve yüklenme süresini azaltmak için kullanılan kritik bir 
+                optimizasyon tekniğidir. Kuantizasyon, model ağırlıklarını 8-bit veya 16-bit tamsayılara düşürür.
+                Bu modelin boyutunu %75'e kadar azaltırken, genellikle kabul edilebilir bir doğruluk kaybına neden olur.
+            - Katman Füzyonu (Layer Fusion)
+                Modelin çalışması sırasında ardışık bazı işlemlerin tek bir GPU çekirdeğinde birleştirilerek
+                işlem fazlalığının azaltılmasıdır.
+
+            İstemci Tarafında Eğitim (On-Device Training)
+            - Transfer Learning
+                Bu tarayıcıda eğitim için en yaygın yaklaşımdır. Önceden eğitilmiş büyük bir modelin son katmanları
+                dondurulur ve sadece küçük, üst katmanları kullanıcının kendi verileriyle yeniden eğitilir. Hızlıdır
+                ve büyük hesaplama gücü gerektirmez.
+            - Federated Learning
+                Gizliliği korumaya odaklanan bir yaklaşımdır. Kullanıcıların kişisel verileri asla cihazlarından
+                ayrılmaz. Modeller, bireysel cihazlarda yerel olarak eğitilir ve yalnızca bu eğitimin sonuçları
+                anonimleştirilerek merkezi bir sunucuya gönderilir. Sunucu, bu güncellemeleri birleştirerek
+                küresel modeli iyileştirir.
+
+            Uygulama Mimarisi
+            Göz önünde bulundurulması gerekenler:
+            - Model Yükleme Stratejileri
+                Büyük modeller, kullanıcı etkileşimi başlamadan önce yüklemek yerine, gerektiğinde(lazy loading) veya
+                önce düşük çözünürlüklü/küçük bir modelle(progressive loading) yüklenerek kullanıcı deneyimi iyileştirilir.
+            - Çoklu İş Parçacağı (Web Workers)
+                ML işlemleri, tarayıcının ana kullanıcı arayüzü (UI) iş parçacağını(thread) dondurabilir. Bu sorunu
+                aşmak için, ML hesaplamaları Web Workers adı verilen ayrı bir arka plan iş parçacağına taşınır,
+                böylece arayüz akıcı kalır.
+            - Çevrimdışı Yetenekler
+                Service Workers kullanılarak model ağırlıkları ve kodları önbelleğe alınabilir. Bu sayede uygulama,
+                kullanıcı internet bağlantısını kaybetse bile ML tahminleri yapmaya devam edebilir.
+
+            WebGpu
+            Web tarayıcıları için oluşturulmuş yeni bir Javascript Apı'sidir. Temel amacı, hem 3d grafik oluşturma hem de genel
+            amaçlı GPU hesaplamalarını standartlaştırmaktır.
+            WebGpu'nun önemi, mevcut GPU Api'leri (Directx 12, Vulkan, Metal) gibi düşük seviyeli ve modern GPU yeteneklerine tam
+            erişim sağlamasıdır. WebGL, daha eski ve kısıtlı bir standart olan OpenGL'den türemiştir.
+            Avantajlar
+            - Paralellik ve Verim:
+                WebGPU, asenkron çalışma biçimiyle tasarlanmıştır. Bu, Cpu'nun GPU'ya birden fazla görev vermesine olanak tanır ve bekleme
+                süresini azaltarak ML iş yüklerinin daha verimli ve hızlı çalışmasını sağlar.
+            - Gelişmiş Bellek Yönetimi:
+                Kaynak yönetimi üzerinde daha doğrudan kontrol sunar. Bu, model ağırlıklarının ve ara değerlerin GPU belleğine daha
+                optimize bir şekilde yerleştirilmesini ve erişilmesini sağlar.    
+            - Modern Programlama Modeli:
+                WebGpu, gölgelendirici(shader) programları için özel olarak tasarlanmış, WGSL(WebGpu Shading Language) adı verilen yeni bir 
+                dil kullanır. WGSL, moderrn GPU gölgelendirici dillerine benzer, daha temiz bir syntax ve daha iyi hata ayıklama yetenekleri sunar.
+            - Düşük CPU yükü:
+                WebGL'e kıyasla API çağrılarının yükünü önemli ölçüde azaltır. Bu, özellikle karmaşık ve büyük ML modellerini çalıştıran
+                CPU'nun diğer görevler için daha serbest kalmasını sağlar.
+            
+            Çalışma Mantığı
+            WebGpu'yı web tabanlı makine öğreniminde kullanmak, temel olarak GPU'yu bir hesaplama motoru olarak kullanmak anlamına gelir.
+            
+            Hesaplama İş Akışı
+            ML'de WebGPU, grafikleri çizmekten ziyade, Hesaplama İşlemlerine(Compute Operations) odaklanır.
+                - Veri Yükleme: Model Ağırlıkları ve giriş verileri, Javascript tarafından GPU belleğine tamponlar(buffers) olarak yüklenir.
+                - WGSL Gölgelendiricileri: Her bir ML operasyonu GPU'nun paralel olarak yürüteceği bir WGSL gölgelendirici çekirdeki(kernel)
+                olarak tanımlanır. Bu çekirdekler, modelin matematiksel işlemlerini gerçekleştirir.
+                - Komut Kuyruğu: Javascript, GPU'ya hangi tamponları kullanacağını ve hangi WGSL çekirdeğini çalıştıracağını belirten komutları
+                bir kuyruğa ekler.
+                - Sonuç Okuma: Hesaplama tamamlandığında, sonuç tamponları GPU belleğinden okunur ve tekrar Javascript'in erişebileceği
+                CPU belleğine geri aktarılır.    
+            */
+    </script>
+</html>

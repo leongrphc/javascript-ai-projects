@@ -1,0 +1,16 @@
+{
+  "name": "ollama",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "ollama.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ollama": "^0.6.3"
+  }
+}

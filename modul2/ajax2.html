@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AJAX İşlemleri</title>
+    <link rel="stylesheet" href="bootstrap.min.css" />
+    <script src="bootstrap.bundle.min.js"></script>
+    <script src="jquery.js"></script>
+  </head>
+  <style>
+    div {
+      padding-left: 10px;
+      color: brown;
+    }
+  </style>
+  <body>
+    <button id="getir">Veri Getir</button>
+    <p id="load"></p>
+    <div id="test"></div>
+  </body>
+  <script>
+    $(document).on("click", "#getir", function () {
+      $.ajax({
+        url: "https://jsonplaceholder.typicode.com/posts",
+        type: "GET",
+        timeout: 5000, // 5 saniye
+        beforeSend: function () {
+          $("#load").html("Yükleniyor...");
+        },
+        complete: function () {
+          $("#load").html("Yükleme tamamlandı.");
+        },
+        success: function (response) {
+          console.log("Başarılı:", response);
+          response.forEach(function (item) {
+            $("#test").append(item.title + "<br>");
+          });
+        },
+        error: function (xhr, status, error) {
+          console.log("Hata mesajı:", error); // hata mesajını görmek için
+          console.log("Hata durumu:", status); // timeout, parsererror, error, abort
+          console.log("XHR nesnesi:", xhr); // 404 500 gibi sunucu hatalarını görmek için
+        },
+      });
+    });
+  </script>
+</html>

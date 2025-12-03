@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      width: 50%;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    #ekle {
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+    }
+  </style>
+  <body>
+    <div class="container">
+      <ul id="liste">
+        <li>Eleman 1</li>
+        <li>Eleman 2</li>
+        <li>Eleman 3</li>
+      </ul>
+      <button id="ekle">Yeni eleman ekle</button>
+      <br />
+      <button id="sil">Eleman sil</button>
+    </div>
+  </body>
+  <script>
+    var ekleButton = document.getElementById("ekle");
+    var silButton = document.getElementById("sil");
+    var ul = document.getElementById("liste");
+
+    ekleButton.addEventListener("click", function () {
+      var yeniekle = document.createElement("li");
+      yeniekle.textContent = "Yeni eleman";
+      ul.appendChild(yeniekle);
+    });
+    silButton.addEventListener("click", function () {
+      //   ul.lastChild.remove();
+      ul.removeChild(ul.lastElementChild);
+    });
+  </script>
+</html>

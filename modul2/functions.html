@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <title>JavaScript Functions</title>
+  </head>
+  <body>
+    <h1>JavaScript Functions</h1>
+    <script>
+      var total = 0;
+      var sayi1 = 10;
+      var sayi2 = 20;
+      var sayi3 = 30;
+      function topla(sayi1, sayi2, sayi3) {
+        total = sayi1 + sayi2 + sayi3;
+        return total;
+      }
+      cikarma = function (sayi1, sayi2) {
+        return sayi1 - sayi2;
+      };
+      function bölme(sayi1, sayi2) {
+        return sayi1 / sayi2;
+      }
+      function çarpma(sayi1, sayi2) {
+        return sayi1 * sayi2;
+      }
+
+      console.log(
+        sayi1 + "+" + sayi2 + "+" + sayi3 + " = " + topla(sayi1, sayi2, sayi3)
+      );
+      console.log(sayi2 + " - " + sayi1 + " = " + cikarma(sayi2, sayi1));
+      console.log(sayi2 + " / " + sayi1 + " = " + bölme(sayi2, sayi1));
+      console.log(sayi2 + " * " + sayi1 + " = " + çarpma(sayi2, sayi1));
+      console.log("Math.PI = " + Math.PI);
+      console.log("Math.round = " + Math.round(2.4)); //en yakın tam sayıya yuvarlar
+      console.log("Math.pow = " + Math.pow(2, 3)); //üssünü alır
+      console.log("Math.ceil = " + Math.ceil(2.1)); //yukarı yuvarlar
+      console.log("Math.floor = " + Math.floor(2.9)); //aşağı yuvarlar
+      console.log("Math.random = " + Math.random() * 100); //0 ile 1 arasında rastgele bir sayı
+      console.log("Math.sqrt = " + Math.sqrt(16)); //karekök alır
+      console.log("Math.min = " + Math.min(0, 150, 30, 20, -8, -200)); //* en küçük sayıyı verir
+      console.log("Math.max = " + Math.max(0, 150, 30, 20, -8, -200)); // * en büyük sayıyı verir
+
+      function getrandomnumber(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+      console.log("1 ile 10 arasında rastgele sayı: " + getrandomnumber(1, 10));
+      console.log(
+        "50 ile 100 arasında rastgele sayı: " + getrandomnumber(50, 100)
+      );
+      console.log(
+        "100 ile 200 arasında rastgele sayı: " + getrandomnumber(100, 200)
+      );
+    </script>
+  </body>
+</html>

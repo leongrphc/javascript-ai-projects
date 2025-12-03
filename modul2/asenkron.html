@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Asenkron Programlama</title>
+    <link rel="stylesheet" href="bootstrap.min.css" />
+    <script src="bootstrap.bundle.min.js"></script>
+    <script src="jquery.js"></script>
+  </head>
+  <body>
+    <h1>Asenkron Programlama ile İlgili İçerik</h1>
+  </body>
+  <script>
+    async function veriGetir() {
+      console.log("veri isteği başladı");
+      var sonuc = await new Promise((resolve) => {
+        //burası bitmeden aşağıya geçmez
+        setTimeout(() => {
+          resolve("Veri alındı");
+        }, 3000);
+      });
+      console.log(sonuc);
+      console.log("veri  işlendi");
+    }
+    $(document).ready(function () {
+      veriGetir();
+      //   console.log("test yazi 1");
+      //   console.log("test yazi 2");
+      //   setTimeout(() => {
+      //     console.log("test yazi 3"); //2 milisaniye sonra düşer ekrana
+      //   }, 2000);
+      //   console.log("veri isteği başladı");
+      //   var veriAl = new Promise((resolve, reject) => {
+      //     setTimeout(() => {
+      //       //veri alındı
+      //       resolve("Veri alındı");
+      //     }, 3000);
+      //   });
+      //   veriAl.then((sonuc) => console.log(sonuc));
+      //   console.log("veri isteği gönderildi");
+    });
+  </script>
+</html>

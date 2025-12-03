@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AJAX İşlemleri</title>
+    <link rel="stylesheet" href="bootstrap.min.css" />
+    <script src="bootstrap.bundle.min.js"></script>
+    <script src="jquery.js"></script>
+  </head>
+  <body>
+    <h2>Kullanıcılar</h2>
+    <div id="loader"></div>
+    <br />
+    <button id="getir">Kullanıcıları Getir</button>
+    <button id="ekle">Kullanıcı Ekle</button>
+    <table id="listele" border="2">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>İsim</th>
+          <th>Email</th>
+          <th>İşlemler</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </body>
+  <script>
+    function renderUsers(users) {
+      var tbody = $("#listele tbody");
+      tbody.empty();
+      $.each(users, function (index, user) {
+        tbody.append(
+          `
+            <tr>
+            <td>${user.id}</td>
+            <td>${user.name}</td>
+            <td>${user.email}</td>
+            <td>
+            <button class="btn btn-danger btn-sm">Sil</button>
+            <button class="btn btn-success btn-sm">Düzenle</button>
+            </td>
+
+            </tr>
+
+        `
+        );
+      });
+    }
+    $(document).on("click", "#getir", function () {
+      $("#loader").html("Yükleniyor...");
+      $.ajax({
+        url: "http://localhost:2222/api/users",
+        method: "GET",
+        dataType: "json",
+        cache: false,
+        timeout: 1000,
+        beforeSend: function () {
+          console.log("Kullanıcılar getiriliyor");
+        },
+        success: function (data) {
+          renderUsers(data);
+          $("#loader").html("Yükleme tamamlandı");
+        },
+        error: function (xhr, status, error) {
+          console.log("hata" + error);
+        },
+      });
+    });
+
+    // Post atıcağınız bir endpointe nasıl header gönderebilirisiniz ve ne işe yarar?
+    $(document).on("click", "#ekle", function () {
+      var newUser = {
+        name: "Yeni Kullanıcı",
+        email: "yeni.kullanici@example.com",
+      };
+
+      $.ajax({
+        url: "http://localhost:2222/api/users",
+        method: "POST",
+        contentType: "application/json",
+        data: JSON.stringify(newUser),
+        dataType: "json",
+        success: function (data) {
+          console.log("Kullanıcı eklendi:", data);
+        },
+        error: function (xhr, status, error) {
+          console.log("hata" + error);
+        },
+      });
+    });
+    // Jsonplaceholder sitesindeki örnek get endpointlerinden data alın. Bu datayı döngüler ile localstorage içine kayıt edin. Daha sonra kullanıcı tarafında bir textbox ve buton koyup yeni eklenen dataları da localstorage içine kayıt edin. Ardından yapay zekaya gönder butonu oluşturup bu dataları bir endpointe post edicek kodu yazın.
+  </script>
+</html>

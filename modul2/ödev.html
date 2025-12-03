@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ödev Hesap Makinesi DOM Manipülasyonu</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+      }
+      #sonuc {
+        margin-top: 20px;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      function hesapla() {
+        var sayi1 = document.getElementById("sayi1").value;
+        var islem = document.getElementById("islem").value;
+        var sayi2 = document.getElementById("sayi2").value;
+        if (islem === "/" && sayi2 == 0) {
+          alert("Bir sayı sıfıra bölünemez!");
+        } else if (islem === "+") {
+          document.getElementById("sonuc").innerText =
+            "Sonuç: " + (parseFloat(sayi1) + parseFloat(sayi2));
+        } else if (islem === "-") {
+          document.getElementById("sonuc").innerText =
+            "Sonuç: " + (parseFloat(sayi1) - parseFloat(sayi2));
+        } else if (islem === "*") {
+          document.getElementById("sonuc").innerText =
+            "Sonuç: " + parseFloat(sayi1) * parseFloat(sayi2);
+        } else if (islem === "/") {
+          document.getElementById("sonuc").innerText =
+            "Sonuç: " + parseFloat(sayi1) / parseFloat(sayi2);
+        } else {
+          alert(
+            "Geçersiz işlem! Lütfen +, -, * veya / işaretlerinden birini girin."
+          );
+        }
+      }
+    </script>
+    <h1>Ödev Hesap Makinesi DOM Manipülasyonu</h1>
+    <input type="number" id="sayi1" placeholder="Birinci sayıyı girin" />
+    <input type="text" id="islem" placeholder="+ - * / işareti girin" />
+    <input type="number" id="sayi2" placeholder="İkinci sayıyı girin" />
+    <button onclick="hesapla()">Hesapla</button>
+    <br />
+    <p id="sonuc"></p>
+  </body>
+</html>

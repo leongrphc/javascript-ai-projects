@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AJAX İşlemleri</title>
+    <link rel="stylesheet" href="bootstrap.min.css" />
+    <script src="bootstrap.bundle.min.js"></script>
+    <script src="jquery.js"></script>
+  </head>
+  <body>
+    <h1>AJAX İşlemleri</h1>
+    <button id="getir">Veri Getir</button>
+    <div id="test"></div>
+  </body>
+  <script>
+    $(document).ready(function () {
+      // url = endpoint
+      // data = gönderilecek veri
+      // success = başarılı olursa çalışacak fonksiyon
+      // error = hata olursa çalışacak fonksiyon
+      $.ajax({
+        url: "https://jsonplaceholder.typicode.com/posts",
+        type: "POST",
+        data: { age: 30 },
+        dataType: "json",
+        success: function (response) {
+          console.log("Başarılı:", response);
+        },
+        error: function (error) {
+          console.log("Hata:", error);
+        },
+      });
+
+      // GET isteği örneği
+    });
+    $(document).on("click", "#getir", function () {
+      $.ajax({
+        url: "https://jsonplaceholder.typicode.com/posts",
+        type: "GET",
+        success: function (response) {
+          console.log("Başarılı:", response);
+          response.forEach(function (item) {
+            $("#test").append(item.title + "<br>");
+          });
+        },
+        error: function (error) {
+          console.log("Hata:", error);
+        },
+      });
+    });
+  </script>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Module Example</title>
+    <style>
+      .paragrafStili {
+        text-decoration: underline;
+        color: blue;
+        font-size: 18px;
+      }
+    </style>
+    <script type="module">
+      var basllik = document.getElementById("baslik");
+      var paragraflar = document.querySelectorAll(".paragrafStili");
+      //   console.log(paragraflar);
+      //  paragraflar.forEach((p) => console.log(p.textContent));
+      paragraflar.forEach(function (paragraf, index) {
+        console.log(
+          "Index değeri:" + index + "Paragraf : " + paragraf.textContent
+        );
+      });
+      var mesaj = document.getElementById("mesaj");
+      var degistir = document.getElementById("degistir");
+      degistir.addEventListener("click", function () {
+        console.log("Butona tıklandı");
+        mesaj.textContent = "Mesaj değişti";
+        mesaj.style.color = "red";
+        mesaj.style.fontWeight = "bold";
+      });
+      var eski = mesaj.textContent;
+      var geriAl = document.getElementById("eski");
+      geriAl.addEventListener("click", function () {
+        console.log("Geri al butonuna tıklandı");
+        mesaj.textContent = eski;
+        mesaj.style.color = "black";
+      });
+    </script>
+  </head>
+  <body>
+    <h1 id="baslik">test baslik</h1>
+    <p class="paragrafStili">deneme</p>
+    <p class="paragrafStili">Java ile dom işlemleri</p>
+    <p class="paragrafStili">Modül 1</p>
+    <h3 id="mesaj">Ana Yazımız değişecek yazı</h3>
+    <button id="degistir">Değiştir</button>
+    <button id="eski">Geri Al</button>
+  </body>
+</html>

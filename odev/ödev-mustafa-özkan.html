@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
+    <title>Ödev - Mustafa Özkan</title>
+    <style>
+      .test {
+        position: absolute;
+
+        height: 100vh;
+        align-items: center;
+        display: flex;
+        justify-content: center;
+      }
+      .secenek1,
+      .secenek2 {
+        background-color: rgb(4, 41, 58);
+        width: 300px;
+        height: 300px;
+        color: white;
+        display: inline-block;
+        border-radius: 40px;
+        font-size: 24px;
+        font-weight: bold;
+        line-height: 300px;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+      }
+      .secenek1:hover {
+        margin-right: 50px;
+        background-color: rgb(102, 68, 139);
+        color: white;
+        transform: scale(1.05);
+        height: 250px;
+        width: 250px;
+        border-radius: 50px;
+        line-height: 250px;
+        transition: all 0.8s ease;
+      }
+      .secenek2:hover {
+        margin-left: 50px;
+        background-color: rgb(102, 68, 139);
+        color: white;
+        transform: scale(1.05);
+        height: 250px;
+        width: 250px;
+        border-radius: 50px;
+        line-height: 250px;
+        transition: all 0.8s ease;
+      }
+      .secenek1 a,
+      .secenek2 a {
+        color: white;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      class="test container-fluid p-5"
+      style="background-color: rgb(10, 11, 12)"
+    >
+      <div class="container mt-5 text-center">
+        <h3 class="text-white">Seçim Yapınız :</h3>
+        <div class="secenek1 text-center mt-5 mb-5">
+          <a href="src/not-analizi.html">Not Analizi</a>
+        </div>
+        <div class="secenek2 text-center mt-5 mb-5">
+          <a href="src/duygu-analizi.html">Duygu Analizi</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

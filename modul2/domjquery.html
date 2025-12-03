@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1 id="baslik">test deneme</h1>
+    <p id="metin">Metin Yükleme</p>
+    <img src="test.png" width="25rem" height="25rem" alt="Açıklayıcı Metin" />
+    <br />
+    <button id="button1">Dene</button>
+    <ul id="liste">
+      <li>Öğe 1</li>
+      <li>Öğe 2</li>
+      <li>Öğe 3</li>
+      <li>Öğe 4</li>
+    </ul>
+    <input type="text" id="yeni-meyve" />
+    <br />
+    <button id="ekle">Yeni Öğe Ekle</button>
+    <button id="sil">Son Öğeyi Sil</button>
+  </body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js"></script>
+  <script>
+    $(document).ready(function () {
+      $("#baslik").text("jQuery ile Başlık Değiştirildi");
+      console.log("jQuery ile DOM yüklendi ve işlenmeye hazır.");
+    });
+    $(document).on("click", "#button1", function () {
+      $("#metin").text("Butona tıklandı ve metin değiştirildi.");
+      console.log("Butona tıklandı ve metin değiştirildi.");
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+      console.log("DOM yüklendi ve işlenmeye hazır.");
+    });
+    window.addEventListener("load", function () {
+      console.log("Tüm kaynaklar yüklendi.");
+    });
+    console.log("Bu kod hemen çalışır.");
+    $(document).on("click", "#ekle", function () {
+      var meyve = $("#yeni-meyve").val();
+      if (meyve === "") {
+        alert("Lütfen bir öğe girin.");
+        return;
+      }
+      $("#liste").append("<li>" + meyve + "</li>");
+      $("#yeni-meyve").val("");
+    });
+    $(document).on("click", "#sil", function () {
+      $("#liste li:last-child").remove();
+    });
+  </script>
+</html>
