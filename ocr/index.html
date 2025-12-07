@@ -1,0 +1,254 @@
+<html>
+  <head>
+    <title>Ocr + Duygu Analizi</title>
+  </head>
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+
+  <style>
+    body {
+      background-color: #f0f2f5;
+      font-family: "Segoe UI", sans-serif;
+    }
+    .preview-img {
+      max-width: 100%;
+      max-height: 250px;
+      border-radius: 8px;
+      display: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .result-box {
+      background-color: #fff;
+      border: 2px dashed #ced4da;
+      min-height: 100px;
+      padding: 15px;
+      border-radius: 8px;
+      white-space: pre-wrap;
+    }
+    .sentiment-card {
+      transition: all 0.3s ease;
+      opacity: 0.5;
+      filter: grayscale(100%);
+    }
+    .sentiment-card.active {
+      opacity: 1;
+      filter: grayscale(0%);
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+    .bg-positive {
+      background-color: #d1e7dd;
+      color: #0f5132;
+      border: 2px solid #badbcc;
+    }
+    .bg-negative {
+      background-color: #f8d7da;
+      color: #842029;
+      border: 2px solid #f5c2c7;
+    }
+  </style>
+
+  <body>
+    <div class="container py-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="text-center mb-4">
+            <h2 class="fw-bold text-primary">Resimden Duygu Analizi</h2>
+            <p class="text-muted">Resmi yükle -> Ocr Yap -> Duygu Analizi</p>
+            <span id="modelStatus" class="badge bg-warning text-dark"
+              >Model Yükleniyor</span
+            >
+          </div>
+
+          <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white py-2">
+              <strong>Resim Seçimi</strong>
+            </div>
+            <div class="card-body text-center">
+              <input
+                type="file"
+                id="imageInput"
+                class="form-control mb-3"
+                accept="image/*"
+              />
+              <img id="imagePreview" class="preview-img mb-3" />
+              <button id="processBtn" class="btn btn-primary w-100" disabled>
+                <i class="fas fa-cogs"></i> Başlat
+              </button>
+            </div>
+          </div>
+
+          <div id="progressContainer" class="mb-4" style="display: none">
+            <p class="mb-1 text-muted small" id="statusText">Başlatılıyor...</p>
+            <div class="progress" style="height: 20px">
+              <div
+                id="progressbar"
+                class="progress-bar progress-bar-striped progress-bar-animated"
+                style="width: 0%"
+              ></div>
+            </div>
+          </div>
+
+          <div class="card shadow-sm mb-4">
+            <div class="card-header bg-white py-2">
+              <strong>Okunan Metin</strong>
+            </div>
+            <div class="card-body">
+              <div id="ocrResult" class="result-box text-muted">
+                Metin bekleniyor...
+              </div>
+            </div>
+          </div>
+
+          <div class="card shadow-sm">
+            <div class="card-header bg-white py-2">
+              <strong>Duygu Analizi</strong>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-6">
+                  <div
+                    id="cardPositive"
+                    class="p-3 rounded text-center sentiment-card bg-positive"
+                  >
+                    <i class="fas fa-smile fa-3x mb-2"></i>
+                    <h5>Pozitif</h5>
+                    <small id="scorePos">Skor: -</small>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div
+                    id="cardNegative"
+                    class="p-3 rounded text-center sentiment-card bg-negative"
+                  >
+                    <i class="fas fa-frown fa-3x mb-2"></i>
+                    <h5>Negatif</h5>
+                    <small id="scoreNeg">Skor: -</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+  <script type="module">
+    import { pipeline } from "https://cdn.jsdelivr.net/npm/@xenova/transformers@2.6.0";
+
+    var sentimentAnalyzer;
+    var selectedFile = null;
+
+    async function loadModel() {
+      try {
+        sentimentAnalyzer = await pipeline("sentiment-analysis");
+        $("#modelStatus")
+          .text("Model Yüklendi")
+          .removeClass("bg-warning")
+          .addClass("bg-success");
+      } catch (error) {
+        $("#modelStatus")
+          .text("Model Yüklenemedi")
+          .removeClass("bg-warning")
+          .addClass("bg-danger");
+      }
+    }
+
+    loadModel();
+
+    $("#imageInput").change(function (e) {
+      const file = e.target.files[0];
+      if (file) {
+        selectedFile = file;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          $("#imagePreview").attr("src", e.target.result).show();
+          $("#processBtn").prop("disabled", false);
+          resetUI();
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    function resetUI() {
+      $("#ocrResult").text("Metin bekleniyor...").removeClass("text-danger");
+      $(".sentiment-card").removeClass("active");
+      $("#scorePos").text("Skor: -");
+      $("#scoreNeg").text("Skor: -");
+      $("#progressContainer").hide();
+      $("#progressbar").addClass("progress-bar-animated");
+    }
+
+    async function runPipeline() {
+      let worker = null;
+      try {
+        updateProgress("Metin Çıkarılıyor...", 20);
+        worker = await Tesseract.createWorker("eng", 1);
+        const {
+          data: { text },
+        } = await worker.recognize(selectedFile);
+        await worker.terminate();
+        worker = null;
+
+        $("#ocrResult").text(text);
+
+        if (!text.trim()) throw new Error("Resimde okunabilir metin yok.");
+        updateProgress("Duygu Analizi Yapılıyor...", 70);
+        const sentimentResult = await sentimentAnalyzer(text);
+
+        updateProgress("Tamamlandı", 100);
+        showSentimentResult(sentimentResult[0]);
+      } catch (error) {
+        console.error(error);
+        $("#ocrResult")
+          .text("Hata: " + error.message)
+          .addClass("text-danger");
+      } finally {
+        if (worker) await worker.terminate();
+        $("#progressbar").removeClass("progress-bar-animated");
+
+        setTimeout(() => {
+          $("#progressContainer").fadeOut();
+        }, 1000);
+      }
+    }
+
+    function updateProgress(msg, percent) {
+      $("#statusText").text(msg);
+      $("#progressbar").css("width", percent + "%");
+    }
+
+    function showSentimentResult(data) {
+      $(".sentiment-card").removeClass("active");
+      const scorePercent = (data.score * 100).toFixed(1) + "%";
+      if (data.label === "POSITIVE") {
+        $("#cardPositive").addClass("active");
+        $("#scorePos").text("Skor: " + scorePercent);
+      } else {
+        $("#cardNegative").addClass("active");
+        $("#scoreNeg").text("Skor: " + scorePercent);
+      }
+    }
+
+    $("#processBtn").click(async function () {
+      if (!selectedFile || !sentimentAnalyzer) return;
+      $(this).prop("disabled", true);
+      $("#progressContainer").fadeIn();
+
+      await runPipeline();
+
+      $(this).prop("disabled", false);
+    });
+  </script>
+</html>
