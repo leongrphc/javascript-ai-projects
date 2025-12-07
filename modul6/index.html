@@ -5,51 +5,71 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <style>
+      .image-container {
+        position: relative;
+        display: inline-block;
+        max-width: 100%;
+      }
+      #selected-image {
+        max-width: 100%;
+        height: auto;
+        display: block;
+      }
+      #canvas-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+
+        pointer-events: none;
+      }
+    </style>
   </head>
   <body>
-    <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <div class="card">
-          <div class="card-header bg-primary text-white">
-            <h3 class="card-title mb-0">Yapay Zeka Nesne Tanıma</h3>
-          </div>
-
-          <div class="card-body">
-            <div id="status-area" class="alert alert-info text-center">
-              Model yükleniyor, lütfen bekleyin...
-              <div
-                class="spinner-border spinner-border-sm ms-2"
-                role="status"
-              ></div>
+    <div class="container mt-5">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+              <h3 class="card-title mb-0">Yapay Zeka Nesne Tanıma</h3>
             </div>
 
-            <div class="mb-4">
-              <label for="image-upload" class="form-label"
-                >Bir fotoğraf seçin:</label
-              >
-              <input
-                class="form-control"
-                type="file"
-                id="image-upload"
-                accept="image/*"
-                disabled
-              />
-            </div>
-
-            <div class="text-center">
-              <div class="image-container">
-                <img id="selected-image" src="" alt="" />
-                <canvas id="canvas-overlay"></canvas>
+            <div class="card-body">
+              <div id="status-area" class="alert alert-info text-center">
+                Model yükleniyor, lütfen bekleyin...
+                <div
+                  class="spinner-border spinner-border-sm ms-2"
+                  role="status"
+                ></div>
               </div>
-            </div>
 
-            <div class="mt-4">
-              <h5>Tespit Edilen Nesneler:</h5>
-              <ul id="detection-results" class="list-group">
-                <li class="list-group-item text-muted">
-                  Henüz bir analiz yapılmadı...
-                </li>
-              </ul>
+              <div class="mb-4">
+                <label for="image-upload" class="form-label"
+                  >Bir fotoğraf seçin:</label
+                >
+                <input
+                  class="form-control"
+                  type="file"
+                  id="image-upload"
+                  accept="image/*"
+                  disabled
+                />
+              </div>
+
+              <div class="text-center">
+                <div class="image-container">
+                  <img id="selected-image" src="" alt="" />
+                  <canvas id="canvas-overlay"></canvas>
+                </div>
+              </div>
+              <div class="mt-4">
+                <h5>Tespit Edilen Nesneler:</h5>
+                <ul id="detection-results" class="list-group">
+                  <li class="list-group-item text-muted">
+                    Henüz bir analiz yapılmadı...
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -108,7 +128,40 @@
       canvas.height = img.height;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const predictions = await model.detect(img);
-      console.log("Tespitler:", predictions);
+      if (predictions.length === 0) {
+        $("#detection-results").append(
+          `<li class="list-group-item">Nesne bulunamadı.</li>`
+        );
+      }
+      $("#status-area")
+        .removeClass("alert-info")
+        .addClass("alert-success")
+        .text("Tespit tamamlandı.");
+      predictions.forEach((prediction) => {
+        const [x, y, width, height] = prediction["bbox"];
+        const text = `${prediction["class"]} - %${(
+          prediction["score"] * 100
+        ).toFixed(2)}`;
+        const score = prediction["score"] * 100;
+        const color = "#" + Math.floor(Math.random() * 16777215).toString(16);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 4;
+        ctx.strokeRect(x, y, width, height);
+        ctx.font = "18px Arial";
+        ctx.fillStyle = color;
+        const textWidth = ctx.measureText(text).width;
+        ctx.fillRect(x, y > 10 ? y - 25 : 0, textWidth + 10, 25);
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText(text, x, y > 10 ? y - 5 : 20);
+        $("#detection-results").append(
+          `<li class="list-group-item d-flex justify-content-between align-items-center">
+              ${prediction["class"]}
+              <span class="badge bg-primary rounded-pill">%${(
+                prediction["score"] * 100
+              ).toFixed(2)}</span>
+            </li>`
+        );
+      });
     }
   </script>
 </html>
